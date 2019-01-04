@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "${workspaceFolderBasename}.map": ".txt",
+        "string.h": "c"
+    },
+
+    "licenser.license": "GPLv3",
+
+    "licenser.author": "Joel Nauschütz (DarkGengar)",
+
+    "licenser.projectName": "${workspaceFolderBasename}"
+}

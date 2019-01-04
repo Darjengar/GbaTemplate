@@ -1,0 +1,4 @@
+#
+# Test bitmap : 240x160@8, No Compression, Transparent Clr : (0,0,0)
+#
+-gb -gB8 -gT000000
