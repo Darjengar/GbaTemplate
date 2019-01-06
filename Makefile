@@ -76,7 +76,7 @@ LIBDIRS			:= $(TONCCODE)/tonclib
 
 bMB		:= 0	# Multiboot build
 bTEMPS	:= 0	# Save gcc temporaries (.i and .s files)
-bDEBUG2	:= 0	# Generate debug info (bDEBUG2? Not a full DEBUG flag. Yet)
+bDEBUG	:= 0	# Generate debug info
 
 
 # ---------------------------------------------------------------------
@@ -93,35 +93,74 @@ IARCH   := -mthumb-interwork -marm -mlong-calls
 
 # --- Main flags ---
 
-CFLAGS	:= -mcpu=arm7tdmi -mtune=arm7tdmi $(ARCH) -O2
-CFLAGS	+= -Wall
-CFLAGS	+= $(INCLUDE)
-CFLAGS	+= -ffast-math -fno-strict-aliasing
+ifeq ($(strip $(bDEBUG)), 2)
+  CFLAGS	:= -mcpu=arm7tdmi -mtune=arm7tdmi $(ARCH) -O3
+  CFLAGS	+= -Wall
+  CFLAGS	+= $(INCLUDE)
+  CFLAGS	+=
 
-CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
+  CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
 
-ASFLAGS	:= $(ARCH)
-LDFLAGS := $(ARCH) -Wl,-Map,../$(APPDIR)/$(PROJ).map
+  ASFLAGS	:= $(ARCH)
+  LDFLAGS := $(ARCH) -Wl,-Map,../$(APPDIR)/$(PROJ)_debug_VBA.map
+else ifeq ($(strip $(bDEBUG)), 1)
+  CFLAGS	:= -mcpu=arm7tdmi -mtune=arm7tdmi $(ARCH) -O3
+  CFLAGS	+= -Wall
+  CFLAGS	+= $(INCLUDE)
+  CFLAGS	+=
+
+  CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
+
+  ASFLAGS	:= $(ARCH)
+  LDFLAGS := $(ARCH) -Wl,-Map,../$(APPDIR)/$(PROJ)_debug_VSC.map
+else
+  CFLAGS	:= -mcpu=arm7tdmi -mtune=arm7tdmi $(ARCH) -O2
+  CFLAGS	+= -Wall
+  CFLAGS	+= $(INCLUDE)
+  CFLAGS	+= -ffast-math -fno-strict-aliasing
+
+  CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions
+
+  ASFLAGS	:= $(ARCH)
+  LDFLAGS := $(ARCH) -Wl,-Map,../$(APPDIR)/$(PROJ).map
+endif
 
 # --- switched additions ----------------------------------------------
 
 # --- Multiboot ? ---
 ifeq ($(strip $(bMB)), 1)
-	TARGET	:= $(PROJ).mb
+  TARGET	:= $(PROJ).mb
 else
-	TARGET	:= $(PROJ)
+  ifeq ($(strip $(bDEBUG)), 2)
+    TARGET	:= $(PROJ)_debug_VBA
+  else ifeq ($(strip $(bDEBUG)), 1)
+    TARGET	:= $(PROJ)_debug_VSC
+  else
+    TARGET	:= $(PROJ)
+  endif
 endif
 	
 # --- Save temporary files ? ---
 ifeq ($(strip $(bTEMPS)), 1)
-	CFLAGS	+= -save-temps
+	CFLAGS		+= -save-temps
+	CXXFLAGS	+= -save-temps
 endif
 
 # --- Debug info ? ---
 
-ifeq ($(strip $(bDEBUG2)), 1)
-	CFLAGS	+= -g
-	LDFLAGS	+= -g
+ifeq ($(strip $(bDEBUG)), 2)
+  CFLAGS	+= -DNDEBUG
+  CXXFLAGS	+= -DNDEBUG
+  ASFLAGS	+= -DNDEBUG
+else ifeq ($(strip $(bDEBUG)), 1)
+  CFLAGS	+= -DDEBUG -g
+  CXXFLAGS	+= -DDEBUG -g
+  ASFLAGS	+= -DDEBUG -g
+  LDFLAGS	+= -g
+else
+  CFLAGS	+= -DNDEBUG
+  CXXFLAGS	+= -DNDEBUG
+  ASFLAGS	+= -DNDEBUG
 endif
 
 # ---------------------------------------------------------------------

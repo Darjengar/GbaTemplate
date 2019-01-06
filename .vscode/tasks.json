@@ -34,9 +34,18 @@
         {
             "label": "run",
             "type": "shell",
-            "command": "mgba",
+            "command": "VisualBoyAdvance",
             "args": [
                 "app/${workspaceFolderBasename}.gba"
+            ]
+        },
+
+        {
+            "label": "debug_vsc",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "--no-builtin-rules", "bDEBUG=1"
             ]
         },
 

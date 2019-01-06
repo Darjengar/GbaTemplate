@@ -1,7 +1,9 @@
 {
     "files.associations": {
         "${workspaceFolderBasename}.map": ".txt",
-        "string.h": "c"
+        "string.h": "c",
+        "agb_debug.h": "c",
+        "gfx.h": "c"
     },
 
     "licenser.license": "GPLv3",
