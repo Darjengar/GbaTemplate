@@ -54,20 +54,17 @@ union Color {
 int main(void)
 {
     load_gfx();
+
     REG_DISPCNT = DCNT_MODE4 | DCNT_BG2;
 
     int txt_pal_idx = 2;
     int frame = 0;
-    int threshold = 16;
+    // txt_delay should have a value which is a power of two
+    int txt_delay = 32;
     int START_PAL_3 = 48;
     COLOR orig_clr = pal_bg_mem[txt_pal_idx];
     COLOR curr_clr = orig_clr;
-    
-    int CHANNEL_R_MASK = BF_MASK(0, 5);
-    int CHANNEL_R_SHIFT = 0;
-    int CHANNEL_G_MASK = BF_MASK(5, 5);
-    int CHANNEL_B_MASK = BF_MASK(10, 5);
-
+    COLOR new_clr = orig_clr;
     int curr_chn_num = 0;
     int curr_chn = bf_get(curr_clr, 0, 5);
 
@@ -75,64 +72,67 @@ int main(void)
     pal_bg_mem[START_PAL_3 + 1] = curr_chn << 0;
     m4_rect(0, 0, 16, 16, START_PAL_3);
     m4_rect(M4_WIDTH - 16, 0, M4_WIDTH, 16, START_PAL_3 + 1);
+
     vid_flip();
 
     while (TRUE)
     {
-        vid_vsync();
+        vid_vsync(); 
         key_poll();
 
-        if ((frame & threshold) == 0)
+        if ((frame & txt_delay) == 0)
         {
             pal_bg_mem[txt_pal_idx] = CLR_BLACK;
         }
         else
         {
             pal_bg_mem[txt_pal_idx] = curr_clr;
-            pal_bg_mem[START_PAL_3] = curr_clr;
+            pal_bg_mem[START_PAL_3] = new_clr;
         }
 
         if (key_hit(KEY_A))
         {
+            curr_clr = new_clr;
             pal_bg_mem[txt_pal_idx] = curr_clr;
         }
         else if (key_hit(KEY_B))
         {
-            curr_clr = CLR_BLUE;
+
         }
         else if (key_hit(KEY_L))
         {
             curr_chn_num = clamp(--curr_chn_num, 0, 3);
-            curr_chn = bf_get(curr_clr, 5 * curr_chn_num, 5);
+            curr_chn = bf_get(new_clr, 5 * curr_chn_num, 5);
             pal_bg_mem[START_PAL_3 + 1] = curr_chn << (5 * curr_chn_num);
         }
         else if (key_hit(KEY_R)) 
         {
             curr_chn_num = clamp(++curr_chn_num, 0, 3);
-            curr_chn = bf_get(curr_clr, 5 * curr_chn_num, 5);
+            curr_chn = bf_get(new_clr, 5 * curr_chn_num, 5);
             pal_bg_mem[START_PAL_3 + 1] = curr_chn << (5 * curr_chn_num);
         }
         if (key_hit(KEY_UP))
         {
-            threshold--;
+            txt_delay--;
         }
         else if (key_hit(KEY_DOWN))
         {
-            threshold++;
+            txt_delay++;
+            agb_dprintf("VALUE OF txt_delay IS %d\n", txt_delay);
         }
         else if (key_held(KEY_LEFT))
         {
             curr_chn = clamp(--curr_chn, 0, 32);
             pal_bg_mem[START_PAL_3 + 1] = curr_chn << (5 * curr_chn_num);
-            curr_clr = bf_merge(curr_clr, curr_chn, 5 * curr_chn_num, 5);
-            pal_bg_mem[START_PAL_3] = curr_clr;
+            new_clr = bf_merge(new_clr, curr_chn, 5 * curr_chn_num, 5);
+            pal_bg_mem[START_PAL_3] = new_clr;
         }
         else if (key_held(KEY_RIGHT))
         {
             curr_chn = clamp(++curr_chn, 0, 32);
             pal_bg_mem[START_PAL_3 + 1] = curr_chn << (5 * curr_chn_num);
-            curr_clr = bf_merge(curr_clr, curr_chn, 5 * curr_chn_num, 5);
-            pal_bg_mem[START_PAL_3] = curr_clr;
+            new_clr = bf_merge(new_clr, curr_chn, 5 * curr_chn_num, 5);
+            pal_bg_mem[START_PAL_3] = new_clr;
         }
         frame++;
     }

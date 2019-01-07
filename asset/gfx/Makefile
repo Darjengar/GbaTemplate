@@ -109,7 +109,7 @@ $(TARGET) : $(OFILES)
 
 $(GFXHDR) : $(OFILES)
 	@echo "Creating master header: $@"
-	@$(call create-master-header,$@,$(subst .o,.h,$^),1)
+	@$(call create-master-header,$@,$(subst .o,.h,$^),0)
 
 
 # ---------------------------------------------------------------------
