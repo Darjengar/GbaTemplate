@@ -6,3 +6,4 @@ module.mk
 gfx.h
 test
 *.ase
+*.gif

@@ -3,7 +3,10 @@
         "${workspaceFolderBasename}.map": ".txt",
         "string.h": "c",
         "agb_debug.h": "c",
-        "gfx.h": "c"
+        "gfx.h": "c",
+        "tonc.h": "c",
+        "tonc_types.h": "c",
+        "tonc_memmap.h": "c"
     },
 
     "licenser.license": "GPLv3",

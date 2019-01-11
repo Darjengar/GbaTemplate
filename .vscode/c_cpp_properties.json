@@ -57,14 +57,14 @@
                 "UNICODE",
                 "_UNICODE"
             ],
-            "intelliSenseMode": "msvc-x64",
+            "intelliSenseMode": "gcc-x64",
             "browse": {
                 "path": [
                     "${workspaceFolder}",
                     "C:/DevkitPro/devkitArm/lib/gcc/arm-none-eabi/7.1.0/include",
                     "C:/DevkitPro/devkitArm/lib/gcc/arm-none-eabi/7.1.0/include-fixed",
                     "C:/DevkitPro/devkitArm/arm-none-eabi/include",
-                    "C:/DevkitPro/tonc_code/code/tonclib/include"
+                    "C:/DevkitPro/tonc/code/tonclib/include"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
