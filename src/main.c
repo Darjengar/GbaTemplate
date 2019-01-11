@@ -31,20 +31,10 @@
 #include <gfx.h>
 #include <agb_debug.h>
 
+OBJ_ATTR obj_buffer[128];
+
 /* -- Prototypes --*/
 void load_gfx();
-
-struct ColorComponents {
-    u16 r : 5;
-    u16 g : 5;
-    u16 b : 5;
-    u16 unused : 1;
-};
-
-union Color {
-    struct ColorComponents components;
-    u16 packed;
-};
 
 /* -- Methods -- */
 
@@ -55,7 +45,21 @@ int main(void)
 {
     load_gfx();
 
-    REG_DISPCNT = DCNT_MODE4 | DCNT_BG2;
+    oam_init(obj_buffer, 1);
+    REG_DISPCNT = DCNT_MODE4 | DCNT_BG2 | DCNT_OBJ | DCNT_OBJ_1D;
+
+    int x = 80, y = 80;
+    u32 pb = 0, tid = 512;
+    OBJ_ATTR *test_obj = &obj_buffer[0];
+
+    obj_set_attr(
+        test_obj,
+        ATTR0_SQUARE | ATTR0_HIDE,
+        ATTR1_SIZE_32, 
+        ATTR2_PALBANK(pb) | tid);
+
+    obj_set_pos(test_obj, x, y);
+    oam_copy(oam_mem, obj_buffer, 1);
 
     int txt_pal_idx = 2;
     int frame = 0;
@@ -70,10 +74,14 @@ int main(void)
 
     pal_bg_mem[START_PAL_3] = orig_clr;
     pal_bg_mem[START_PAL_3 + 1] = curr_chn << 0;
+    pal_bg_mem[START_PAL_3 + 2] = CLR_MONEYGREEN;
+
     m4_rect(0, 0, 16, 16, START_PAL_3);
     m4_rect(M4_WIDTH - 16, 0, M4_WIDTH, 16, START_PAL_3 + 1);
 
     vid_flip();
+
+    m4_rect((M4_WIDTH / 2) - 8, (M4_HEIGHT / 2) - 8, (M4_WIDTH / 2) + 8, (M4_HEIGHT / 2) + 8, START_PAL_3 + 2);
 
     while (TRUE)
     {
@@ -88,6 +96,23 @@ int main(void)
         {
             pal_bg_mem[txt_pal_idx] = curr_clr;
             pal_bg_mem[START_PAL_3] = new_clr;
+        }
+
+        if (key_hit(KEY_START))
+        {
+            vid_flip();
+            //obj_unhide(test_obj, ATTR0_REG);
+            
+            while (TRUE)
+            {
+                key_poll();
+
+                if (key_hit(KEY_START)) 
+                {
+                    break;
+                }
+            }
+            vid_flip();
         }
 
         if (key_hit(KEY_A))
@@ -118,7 +143,6 @@ int main(void)
         else if (key_hit(KEY_DOWN))
         {
             txt_delay++;
-            agb_dprintf("VALUE OF txt_delay IS %d\n", txt_delay);
         }
         else if (key_held(KEY_LEFT))
         {
@@ -142,8 +166,10 @@ int main(void)
 
 void load_gfx()
 {
-    memcpy(&vid_mem_back[0], &test_bgBitmap, test_bgBitmapLen);
-    memcpy(&pal_bg_mem[0], &test_bgPal, test_bgPalLen);
+    memcpy(&vid_mem_back[0], test_bgBitmap, test_bgBitmapLen);
+    memcpy(pal_bg_mem, test_bgPal, test_bgPalLen);
+    memcpy(&tile_mem[5][0], player2Tiles, player2TilesLen);
+    memcpy(pal_obj_mem, player2Pal, player2PalLen);
 }
 
 // EOF
