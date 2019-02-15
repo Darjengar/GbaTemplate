@@ -32,11 +32,20 @@
         },
 
         {
-            "label": "run",
+            "label": "run vba",
             "type": "shell",
             "command": "VisualBoyAdvance",
             "args": [
-                "app/${workspaceFolderBasename}.gba"
+                "--throttle=100", "--filter-super-eagle", "--agb-print", "app/${workspaceFolderBasename}.gba"
+            ]
+        },
+
+        {
+            "label": "run mgba",
+            "type": "shell",
+            "command": "mgba",
+            "args": [
+                "-2", "app/${workspaceFolderBasename}.gba"
             ]
         },
 

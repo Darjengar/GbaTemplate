@@ -26,21 +26,27 @@
         {
             "name": "Linux",
             "includePath": [
-                "/usr/include",
-                "/usr/local/include",
-                "${workspaceFolder}"
+                "${env:DEVKITARM}/lib/gcc/arm-none-eabi/7.1.0/include",
+                "${env:DEVKITARM}/lib/gcc/arm-none-eabi/7.1.0/include-fixed",
+                "${env:DEVKITARM}/arm-none-eabi/include",
+                "${env:DEVKITPRO}/libtonc/include",
+                "${workspaceFolder}/include"
             ],
             "defines": [],
             "intelliSenseMode": "clang-x64",
             "browse": {
                 "path": [
-                    "/usr/include",
-                    "/usr/local/include",
-                    "${workspaceFolder}"
+                    "${env:DEVKITARM}/lib/gcc/arm-none-eabi/7.1.0/include",
+                    "${env:DEVKITARM}/lib/gcc/arm-none-eabi/7.1.0/include-fixed",
+                    "${env:DEVKITARM}/arm-none-eabi/include",
+                    "${env:DEVKITPRO}/libtonc/include",
+                    "${workspaceFolder}/include"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
-            }
+            },
+            "cStandard": "c99",
+            "cppStandard": "c++98"
         },
         {
             "name": "Win32",

@@ -17,20 +17,11 @@
 
 SHELL	:= /bin/bash	# Do not think about to change this variable
 
+export ROOT  ?= $(CURDIR)
+
 # --- Check for needed environment variables ---
-ifndef DEVKITPRO
-  $(warning "The environment variable DEVKITPRO is not defined. Default	\
-			'/c/DevkitPro' is set.")
-  DEVKITPRO := /c/DevkitPro
-endif
 
-ifndef TONCCODE
-  $(warning "The environment variable TONCCODE is not defined. Default	\
-			'$(DEVKITPRO)/tonc_code/code/tonclib' is set.")
-  TONCCODE := $(DEVKITPRO)/tonc/code
-endif
-
-include $(TONCCODE)/tonc_rules.mk
+include $(ROOT)/tonc_rules.mk
 
 # --- Main path ---
 export PATH	:=	$(DEVKITARM)/bin:$(PATH)
@@ -69,7 +60,7 @@ SRCDIRS			:= src asset
 DATADIRS		:= data
 INCDIRS			:= include
 LIBDIR			:= lib
-LIBDIRS			:= $(TONCCODE)/tonclib 
+LIBDIRS			:= $(DEVKITPRO)/libtonc 
 
 
 # --- switches ---
